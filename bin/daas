@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+REPO=${REPO:-leoh0}
+
+clean_up() {
+    rm -rf "${temp}"
+}
+
+trap clean_up EXIT
+
+temp=$(mktemp -d)
+
+target=$(echo "$1" | sed 's/\/$//g')
+add_target=$(echo "$target" | awk -F "/" '{print $NF}')
+
+cp -r "$target" "$temp"
+
+(
+cd "$temp" || exit
+
+cat >DockerFile << EOF
+FROM scratch
+COPY ${add_target} /${add_target}
+EOF
+
+time=$(date +"%y%m%d%H%M%S")
+
+echo
+echo -e "\\033[0;33mBuild image\\033[0m \\033[0;32m ✔\\033[0m"
+docker build -t "${REPO}/${add_target}:${time}" -f DockerFile .
+
+echo
+echo -e "\\033[0;33mPush image\\033[0m \\033[0;32m ✔\\033[0m"
+docker push "${REPO}/${add_target}:${time}"
+
+image="${REPO}/${add_target}"
+imageTag="${time}"
+digest="${imageTag}"
+
+token="$(curl -fsSL "https://auth.docker.io/token?service=registry.docker.io&scope=repository:$image:pull" | sed 's/.*"token":"\([^"]*\)".*/\1/g')"
+
+rawjson=$(curl -fsSL \
+    -H "Authorization: Bearer $token" \
+    -H 'Accept: application/vnd.docker.distribution.manifest.v2+json' \
+    "https://registry-1.docker.io/v2/$image/manifests/$digest")
+# shellcheck disable=SC2001
+# shellcheck disable=SC2086
+digest=$(echo $rawjson | sed 's/.*layers":.*"digest": "\([^\"].*\)\".*/\1/g')
+
+echo
+echo -e "\\033[0;35mUse below command\\033[0m \\033[0;32m ✔\\033[0m"
+echo
+echo "curl -fSL --progress \
+  -H \"Authorization: Bearer \$(curl -fsSL \"https://auth.docker.io/token?service=registry.docker.io&scope=repository:${REPO}/${add_target}:pull\" | sed 's/.*\"token\":\"\\([^\"]*\\)\".*/\\1/g')\" \
+  https://registry-1.docker.io/v2/${REPO}/${add_target}/blobs/${digest} | tar xzvf -"
+)

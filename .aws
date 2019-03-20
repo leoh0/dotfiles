@@ -1,0 +1,24 @@
+#!/bin/bash
+
+export AWS_REGION=ap-northeast-2
+
+# aws
+function awsssh() {
+  target=kubelet
+  if [[ "$2" != "" ]]; then
+    target=$2
+  fi
+  ssh "root@${1}" -t ctr -n services.linuxkit t exec -t --exec-id "$(uuidgen)" "${target}" sh
+}
+
+function awsls() {
+  aws ec2 describe-instance-status --filters Name=instance-state-code,Values=16,Name=instance-status.status,Values=ok,Name=system-status.status,Values=ok --query 'InstanceStatuses[*].InstanceId' --output text | xargs -L1 aws ec2 describe-instances --query "Reservations[*].Instances[*].[LaunchTime,InstanceId,PublicIpAddress,PrivateIpAddress] | sort_by(@, &[0][0])" --output table --instance-id
+}
+
+function awsils() {
+  aws ec2 describe-images --filters Name=image-type,Values=machine Name=is-public,Values=false --query 'Images[*].[CreationDate,Name,ImageId]' --output table
+}
+
+function awsidel() {
+  aws ec2 deregister-image --image-id "$1"
+}

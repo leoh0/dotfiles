@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# shellcheck source=/dev/null
+source "$HOME/.dockerfunc"
+
+chrome

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+mapfile -t pods < <(kubectl get pods --show-labels --all-namespaces | sed '1d' | fzf -x -m -e +s --reverse --bind=left:page-up,right:page-down --no-mouse | awk '{print $1" "$7}')
+
+if [[ "${pods[0]}" != "" ]]; then
+    stern -n "${pods[0]}" -l "${pods[1]}"
+fi

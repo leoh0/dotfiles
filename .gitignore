@@ -1,0 +1,25 @@
+*~
+
+# KDE directory preferences
+.directory
+
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+
+.uuid
+
+.extra
+.gitconfig
+.gnupg
+!.gnupg/gpg*.conf
+.i3/logfile
+.nginx/conf.d/*
+
+private

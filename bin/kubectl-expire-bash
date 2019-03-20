@@ -1,0 +1,161 @@
+#!/bin/bash
+
+# kube-system variable
+kube_system=${kube_system:-kube-system}
+
+# get apiserver
+apiserver=$(kubectl get pod \
+              -n "$kube_system" \
+              -l component=kube-apiserver,tier=control-plane \
+              -o custom-columns=NAME:.metadata.name \
+              --no-headers=true | head -n1)
+
+if [ -z "$apiserver" ]; then
+    echo "Can not find any apiserver by this kubeconfig"
+    exit 1
+fi
+
+# TODO: crt 외에 key를 체크하는게 더 정확
+# shellcheck disable=SC2207
+# shellcheck disable=SC2016
+certs=( $(kubectl get pod "$apiserver" \
+  -n "$kube_system" \
+  -o go-template='''
+{{- range $element :=(index .spec.containers 0).command }}
+  {{- printf "%s\n" $element }}
+{{- end -}}
+''' | grep -G '\.crt$') )
+
+# kubelet-certificate-authority
+
+echo 
+echo "apiserver certs"
+
+for c in "${certs[@]}"; do
+    IFS='=' read -r -a map <<< "${c/--}"
+    afterdate=$(kubectl exec -i "$apiserver" -n "$kube_system" -- cat "${map[1]}" | openssl x509 -noout -dates | awk -F= '/notAfter=/{print $2}')
+    # shellcheck disable=2046
+    days=$(echo "(" $(date +%s -d "$afterdate") - $(date +%s -d "now") ")" /86400 | bc)
+
+    echo "${map[0]} $days"
+done
+
+# get controller manager
+controller_manager=$(kubectl get pod \
+                      -n "$kube_system" \
+                      -l component=kube-controller-manager,tier=control-plane \
+                      -o custom-columns=NAME:.metadata.name \
+                      --no-headers=true | head -n1)
+
+if [ -z "$controller_manager" ]; then
+    echo "Can not find any controller_manager by this kubeconfig"
+    exit 1
+fi
+
+echo 
+echo "controller-manager certs"
+
+# TODO: kubeconfig 값을 보고 하는게 더 정확
+# TODO: client-certificate-data 외에 다른 체크가 필요할 수 있음
+# shellcheck disable=2016
+afterdate=$(kubectl exec \
+             -i "$controller_manager" \
+             -n "$kube_system" \
+             -- \
+             awk '/client-certificate-data/{print $2}' /etc/kubernetes/controller-manager.conf | \
+               base64 -d | \
+               openssl x509 -noout -dates | \
+               awk -F= '/notAfter=/{print $2}')
+# shellcheck disable=2046
+days=$(echo "(" $(date +%s -d "$afterdate") - $(date +%s -d "now") ")" /86400 | bc)
+
+echo "cert $days"
+
+# get scheduler
+scheduler=$(kubectl get pod \
+              -n "$kube_system" \
+              -l component=kube-scheduler,tier=control-plane \
+              -o custom-columns=NAME:.metadata.name \
+              --no-headers=true | head -n1)
+
+if [ -z "$scheduler" ]; then
+    echo "Can not find any scheduler by this kubeconfig"
+    exit 1
+fi
+
+echo 
+echo "scheduller certs"
+
+# TODO: kubeconfig 값을 보고 하는게 더 정확
+# TODO: client-certificate-data 외에 다른 체크가 필요할 수 있음
+# shellcheck disable=2016
+afterdate=$(kubectl exec \
+             -i "$scheduler" \
+             -n "$kube_system" \
+             -- \
+             awk '/client-certificate-data/{print $2}' /etc/kubernetes/scheduler.conf | \
+               base64 -d | \
+               openssl x509 -noout -dates | \
+               awk -F= '/notAfter=/{print $2}')
+# shellcheck disable=2046
+days=$(echo "(" $(date +%s -d "$afterdate") - $(date +%s -d "now") ")" /86400 | bc)
+
+echo "cert $days"
+
+kubectl create -f - << EOF
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app: krawler
+  name: krawler
+  namespace: default
+spec:
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 100%
+  selector:
+    matchLabels:
+      app: krawler
+  template:
+    metadata:
+      labels:
+        app: krawler
+    spec:
+      hostPID: true
+      containers:
+      - command:
+        - sleep
+        - "600"
+        image: busybox
+        imagePullPolicy: IfNotPresent
+        name: krawler
+        volumeMounts:
+        - mountPath: /etc/kubernetes/
+          name: host-etc
+        - mountPath: /var/lib/kubelet/
+          name: host-lib
+      tolerations:
+      - operator: "Exists"
+      volumes:
+      - hostPath:
+          path: /etc/kubernetes/
+        name: host-etc
+      - hostPath:
+          path: /var/lib/kubelet/
+        name: host-lib
+EOF
+
+while kubectl get pod \
+  --no-headers=true \
+  -l app=krawler \
+  -o custom-columns=A:.status.phase | \
+    grep -v Running >/dev/null 2>&1
+do
+  sleep 1
+done
+
+kubectl get nodes  -o custom-columns=NAME:.metadata.name --no-headers=true
+
+kubectl wait pod -l app=krawler --for condition=Ready
