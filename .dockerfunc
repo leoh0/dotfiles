@@ -373,24 +373,25 @@ john(){
 kakao(){
 	del_stopped kakao
 
-	if [[ ! -d "${HOME}/.kakao" ]]; then
-		mkdir -p "${HOME}/.kakao"
+	if [[ ! -d "${HOME}/.wine" ]]; then
+		mkdir -p "${HOME}/.wine"
 	fi
 
-	# If you need to use without virtual desktop then
-	# please add below environment
-	# -e "DISABLE_VIRTUAL_DESKTOP=1" \
+	# If you want to use virtual desktop mode
+	# docker exec -ti kakao sh -c ' \
+	# 	wget  https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
+	# 	&& chmod +x ./winetricks \
+	# 	&& ./winetricks vd=900x1020'
 	docker run -d \
 		-e "GTK_IM_MODULE=uim" \
 		-e "XMODIFIERS=@im=uim" \
 		-e "QT_IM_MODULE=uim" \
-		-e "DISABLE_VIRTUAL_DESKTOP=0" \
-		-e "RESIZE_VIRTUAL_DESKTOP=1280x1600" \
 		-e "DISPLAY=unix$DISPLAY" \
 		-v /etc/localtime:/etc/localtime:ro \
 		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-v "$HOME/.kakao:/home/wine/.wine/drive_c/users/wine/Local Settings/Application Data" \
-		--user "$(id -u "$(whoami)"):$(id -u "$(whoami)")" \
+		-v "$HOME/.wine:/home/wine/.wine" \
+		--link pulseaudio:pulseaudio \
+		-e PULSE_SERVER=pulseaudio \
 		--hostname kakao \
 		--name kakao \
 		${DOCKER_REPO_PREFIX}/kakao

@@ -1,2 +1,4 @@
 #!/bin/sh
-xrandr --output VIRTUAL1 --off --output DP3 --off --output DP1 --off --output eDP1 --mode 1920x1080 --pos 0x0 --rotate normal --primary --output DP2 --off
+xrandr --output DP-3 --off --output DP-1 --off --output eDP-1 --mode 1920x1080 --pos 0x0 --rotate normal --primary --output DP-2 --off
+
+DISPLAY=:0 nitrogen --save --set-zoom-fill --head=0 "/usr/share/backgrounds/al.jpg"

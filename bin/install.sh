@@ -115,6 +115,7 @@ EOF
 		ripgrep \
 		strace \
 		tig \
+		tmux \
 		ttf-nanum \
 		ttf-nanumgothic_coding \
 		uim \

@@ -1,2 +1,5 @@
 #!/bin/sh
-xrandr --output VIRTUAL1 --off --output DP1 --mode 2560x1440 --pos 0x0 --rotate normal --primary --output DP3 --mode 2560x1440 --pos 2560x0 --rotate normal --output eDP1 --off --output DP2 --off
+xrandr --output DP-1 --mode 2560x1440 --pos 0x0 --rotate normal --primary --output DP-3 --mode 2560x1440 --pos 2560x0 --rotate normal --output eDP-1 --off --output DP-2 --off
+
+DISPLAY=:0 nitrogen --save --set-zoom-fill --head=0 "/usr/share/backgrounds/al.jpg"
+DISPLAY=:0 nitrogen --save --set-zoom-fill --head=1 "/usr/share/backgrounds/al.jpg"
