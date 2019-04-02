@@ -68,7 +68,8 @@ bindsym $mod+F2 exec google-chrome-stable
 #bindsym $mod+F3 exec pcmanfm
 bindsym $mod+F3 exec terminal -e 'ranger'
 bindsym $mod+Shift+F3 exec gksu pcmanfm
-bindsym $mod+F4 exec uxterm -fa 'Inconsolata' -fs 14
+bindsym $mod+F4 exec terminal -e 'change-ctrl'
+#bindsym $mod+F4 exec uxterm -fa 'Inconsolata' -fs 14
 
 bindsym $mod+F5 exec terminal -e 'mocp'
 bindsym $mod+F7 exec terminal -e '/usr/local/bin/switch-to-notebook'
@@ -366,7 +367,9 @@ set_from_resource $term_color15    color15
 # Start i3bar to display a workspace bar (plus the system information i3status if available)
 bar {
 	i3bar_command i3bar
-	status_command i3status
+	#status_command add-brightness-i3status
+	#status_command i3status-rs ~/.i3/status.toml
+	status_command i3status --config ~/.i3/status.conf
 	position bottom
     #tray_padding 0
     #height 30
@@ -392,7 +395,6 @@ bar {
         binding_mode       #16a085 #2C2C2C #F9FAF9
         urgent_workspace   #16a085 #FDF6E3 #E5201D
     }
-    status_command $barcmd --config ~/.i3/status.conf
 }
 
 # hide/unhide i3status bar

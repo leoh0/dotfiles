@@ -379,9 +379,8 @@ kakao(){
 
 	# If you want to use virtual desktop mode
 	# docker exec -ti kakao sh -c ' \
-	# 	wget  https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
-	# 	&& chmod +x ./winetricks \
-	# 	&& ./winetricks vd=900x1020'
+	# 	winetricks vd=940x1025 \
+	# 	&& winetricks sound=pulse'
 	docker run -d \
 		-e "GTK_IM_MODULE=uim" \
 		-e "XMODIFIERS=@im=uim" \

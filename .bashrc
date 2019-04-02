@@ -198,7 +198,7 @@ unset file
 if [ -d "$HOME/.autoenv/" ]; then
         # shellcheck source=/dev/null
         source "$HOME/.autoenv/activate.sh"
-fi 
+fi
 
 # pyenv
 if [ -d "$HOME/.pyenv/" ]; then
@@ -209,3 +209,4 @@ if [ -d "$HOME/.pyenv/" ]; then
         # activate py36
         pyenv activate py36
 fi
+

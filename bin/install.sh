@@ -120,6 +120,7 @@ EOF
 		ttf-nanumgothic_coding \
 		uim \
 		unzip \
+		urxvt-resize-font-git \
 	"
 
         # set ntp time

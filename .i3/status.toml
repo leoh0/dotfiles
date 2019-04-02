@@ -1,0 +1,80 @@
+theme = "solarized-dark"
+icons = "awesome"
+
+[[block]]
+block = "focused_window"
+max_width = 21
+
+[[block]]
+block = "net"
+device = "wlan0"
+ssid = true
+ip = true
+speed_up = false
+graph_up = false
+interval = 5
+
+[[block]]
+block = "speedtest"
+bytes = true
+interval = 1800
+
+[[block]]
+block = "nvidia_gpu"
+label = "GPU"
+show_memory = false
+show_clocks = false
+interval = 1
+
+[[block]]
+block = "disk_space"
+path = "/"
+alias = "/"
+info_type = "available"
+unit = "GB"
+interval = 20
+warning = 20.0
+alert = 10.0
+
+[[block]]
+block = "memory"
+display_type = "memory"
+format_mem = "{Mup}%"
+format_swap = "{SUp}%"
+
+[[block]]
+block = "cpu"
+interval = 1
+
+[[block]]
+block = "load"
+interval = 1
+format = "{1m} {5m}"
+
+[[block]]
+block = "music"
+player = "spotify"
+buttons = ["play", "next"]
+
+[[block]]
+block = "sound"
+
+[[block]]
+block = "battery"
+upower = true
+format = "{percentage}% {time}"
+
+[[block]]
+block = "backlight"
+device = "intel_backlight"
+
+[[block]]
+block = "time"
+interval = 60
+format = "%a %d/%m %R"
+
+[[block]]
+block = "temperature"
+collapsed = true
+interval = 10
+format = "{min}° min, {max}° max, {average}° avg"
