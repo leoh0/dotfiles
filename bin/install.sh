@@ -105,6 +105,7 @@ EOF
 		bcc \
 		bind-tools \
 		fd \
+		hexyl \
 		imwheel \
 		jq \
 		neovim \
@@ -121,6 +122,7 @@ EOF
 		uim \
 		unzip \
 		urxvt-resize-font-git \
+		yq-bin \
 	"
 
         # set ntp time
