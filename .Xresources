@@ -125,10 +125,14 @@ URxvt.keysym.Control-Up:          \033[1;5A
 URxvt.keysym.Shift-Control-Up:    \033[1;6A
 URxvt.keysym.Control-Down:        \033[1;5B
 URxvt.keysym.Shift-Control-Down:  \033[1;6B
-URxvt.keysym.M-Escape: perl:keyboard-select:activate
+URxvt.keysym.M-Escape:            perl:keyboard-select:activate
 ! The following line overwrites the default Meta-s binding and allows to
 ! activate keyboard-select directly in backward search mode:
-URxvt.keysym.M-s: perl:keyboard-select:search
+URxvt.keysym.M-s:                 perl:keyboard-select:search
+URxvt.keysym.C-minus:             resize-font:smaller
+URxvt.keysym.C-plus:              resize-font:reset
+URxvt.keysym.C-equal:             resize-font:bigger
+URxvt.keysym.C-question:          resize-font:show
 ! Rxvt.perl-ext-common:             ...,clipboard
 ! URxvt.keysym.M-C-c:               perl:clipboard:copy
 ! URxvt.keysym.M-v:                 perl:clipboard:paste
