@@ -352,6 +352,7 @@ install_autoenv() {
 
 install_stuff() {
 	echo "install stuff"
+	wget https://github.com/wercker/stern/releases/download/1.10.0/stern_linux_amd64 && chmod +x stern_linux_amd64 && sudo mv stern_linux_amd64 /usr/local/bin/stern
 }
 
 usage() {
