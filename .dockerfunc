@@ -382,6 +382,7 @@ kakao(){
 	# 	winetricks vd=940x1025 \
 	# 	&& winetricks sound=pulse'
 	docker run -d \
+		--ipc=host \
 		-e "GTK_IM_MODULE=uim" \
 		-e "XMODIFIERS=@im=uim" \
 		-e "QT_IM_MODULE=uim" \
@@ -393,7 +394,7 @@ kakao(){
 		-e PULSE_SERVER=pulseaudio \
 		--hostname kakao \
 		--name kakao \
-		${DOCKER_REPO_PREFIX}/kakao
+		${DOCKER_REPO_PREFIX}/kakaotalk-wine
 
 	if [[ "$1" == "auto" ]]; then
 		pass -c app/kakao
