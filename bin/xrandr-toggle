@@ -178,7 +178,7 @@ class RandRState(object):
       return line
     screen_re = re.compile(r'^Screen')
     display_re = re.compile(r'^(?P<name>\S+)\s+((?P<disconnected>dis))?'
-                            + r'connected\s+((?P<primary>pri))?\s+((?P<res_x>\d+)x(?P<res_y>\d+)'
+                            + r'connected\s+((?P<primary>primary))?\s*((?P<res_x>\d+)x(?P<res_y>\d+)'
                             + r'\+(?P<pos_x>\d+)\+(?P<pos_y>\d+))?')
     mode_re = re.compile(r'^\s+(?P<res_x>\d+)x(?P<res_y>\d+)\s+\d+')
     state = cls()
@@ -198,8 +198,8 @@ class RandRState(object):
       state.AddDisplay(display)
       res = tuple((int(match.group(x) or 0) for x in ('res_x', 'res_y')))
       pos = tuple((int(match.group(x) or 0) for x in ('pos_x', 'pos_y')))
-      print(res)
-      print(pos)
+      #print(res)
+      #print(pos)
       if connected and res != (0, 0):
         state.AddConnected(display)
         state.SetResolution(display, res)
@@ -274,7 +274,7 @@ class RandRStateMachine(object):
     for disp in self._state.displays:
       if not self._state.IsConnected(disp):
         continue
-      if disp.startswith('LVDS'):
+      if disp.startswith('eDP'):
         if self._state.GetPosition(disp) == (0, 0):
           return 1
         else:
@@ -291,9 +291,10 @@ class RandRStateMachine(object):
     lvds = ''
     ext = ''
     for disp in self._state.displays:
+      print(disp)
       if not self._state.IsConnected(disp):
         continue
-      if disp.startswith('LVDS'):
+      if disp.startswith('eDP'):
         lvds = disp
       else:
         ext = disp
@@ -305,7 +306,7 @@ class RandRStateMachine(object):
 
   def SetPairExtRight(self):
     for disp in self._state.displays:
-      if disp.startswith('LVDS'):
+      if disp.startswith('eDP'):
         self._state.SetPosition(disp, (0, 0))
         self._state.Commit()
     self._SetPairExt(self._state.RIGHT_OF)

@@ -1245,6 +1245,7 @@ virtualbox(){
 
 		sudo docker cp virtualbox_setup:/usr/lib/virtualbox /usr/lib
 		sudo docker cp virtualbox_setup:/usr/share/virtualbox /usr/share
+		#sudo chmod u+s /usr/lib/virtualbox/VirtualBox
 		sudo /usr/lib/virtualbox/vboxdrv.sh setup
 		sudo rm -rf /usr/share/virtualbox /usr/lib/virtualbox
 
@@ -1255,8 +1256,8 @@ virtualbox(){
 		-v /etc/localtime:/etc/localtime:ro \
 		-v /tmp/.X11-unix:/tmp/.X11-unix \
 		-e DISPLAY=unix$DISPLAY \
-		-v "$HOME/.config/VirtualBox:/home/vbox/.config/VirtualBox" \
-		-v "$HOME/VirtualBox VMs:/home/vbox/VirtualBox VMs" \
+		-v "$HOME/.config/VirtualBox:/root/.config/VirtualBox" \
+		-v "$HOME/VirtualBox VMs:/root/VirtualBox VMs" \
 		--privileged \
 		--name virtualbox \
 		${DOCKER_REPO_PREFIX}/virtualbox

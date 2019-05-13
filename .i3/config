@@ -57,6 +57,12 @@ bindsym $mod+Ctrl+m exec terminal -e 'alsamixer'
 
 ################################################################################################
 
+# audio controls
+bindsym XF86AudioRaiseVolume exec amixer set Master 5%+ #increase sound volume
+bindsym XF86AudioLowerVolume exec amixer set Master 5%- #decrease sound volume
+bindsym XF86AudioMute exec amixer -D pulse set Master 1+ toggle # mute sound
+bindsym XF86AudioMicMute exec amixer -D pulse set Capture toggle # mute mic
+
 # Screen brightness controls
 # bindsym XF86MonBrightnessUp exec "xbacklight -inc 10; notify-send 'brightness up'"
 # bindsym XF86MonBrightnessDown exec "xbacklight -dec 10; notify-send 'brightness down'"
@@ -233,7 +239,7 @@ for_window [class="Skype"] floating enable border normal
 for_window [class="Timeset-gui"] floating enable border normal
 for_window [class="(?i)virtualbox"] floating enable border normal
 for_window [class="Xfburn"] floating enable
-for_window [class="Wine"] floating enable border none
+# for_window [class="Wine"] floating enable border none
 # spotify: no border
 #for_window [class="^Spotify$"] border none
 for_window [class="^Spotify Premium$"] border none
@@ -257,7 +263,7 @@ for_window [class="Tor Browser"] floating enable
 for_window [class="Virt-viewer"] floating enable
 for_window [class="VirtualBox"] floating enable
 for_window [class="vlc"] floating enable
-for_window [class="Wine"] floating enable
+# for_window [class="Wine"] floating enable
 for_window [class="Wireshark"] floating enable
 
 
@@ -399,6 +405,10 @@ bar {
 
 # hide/unhide i3status bar
 bindsym $mod+m bar mode toggle
+
+# move workspace to monitor
+bindsym $mod+comma move workspace to output left
+bindsym $mod+period move workspace to output left
 
 # Theme colors
 # class                   border  backgr. text    indic.   child_border

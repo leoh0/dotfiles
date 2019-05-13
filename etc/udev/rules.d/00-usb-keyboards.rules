@@ -1,0 +1,1 @@
+ACTION=="add", ATTRS{idVendor}=="0c45", ATTRS{idProduct}=="086a", RUN+="/usr/    local/bin/init-keyboard", OWNER="al"
