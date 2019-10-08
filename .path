@@ -11,3 +11,6 @@ export PATH="/usr/local/go/bin:${GOPATH}/bin:${PATH}"
 
 # add for snap application path
 export PATH="/var/lib/snapd/snap/bin:${PATH}"
+
+# add cargo path
+export PATH="$HOME/.cargo/bin:${PATH}"
