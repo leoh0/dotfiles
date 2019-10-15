@@ -128,7 +128,7 @@ if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
         fi
 fi
 # add alias for ssh to update the tty
-alias ssh="gpg-connect-agent updatestartuptty /bye >/dev/null; ssh"
+alias ssh="gpg-connect-agent updatestartuptty /bye >/dev/null; TERM=xterm-color ssh"
 
 #
 # # ex - archive extractor
