@@ -97,13 +97,15 @@ audacity(){
 		--name audacity \
 		${DOCKER_REPO_PREFIX}/audacity
 }
-aws(){
-	docker run -it --rm \
-		-v "${HOME}/.aws:/root/.aws" \
-		--log-driver none \
-		--name aws \
-		${DOCKER_REPO_PREFIX}/awscli "$@"
-}
+#aws(){
+#	docker run -it --rm \
+#		-v "${HOME}/.aws:/root/.aws" \
+#		-e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+#		-e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+#		--log-driver none \
+#		--name aws \
+#		${DOCKER_REPO_PREFIX}/awscli "$@"
+#}
 az(){
 	docker run -it --rm \
 		-v "${HOME}/.azure:/root/.azure" \
@@ -671,9 +673,7 @@ opensnitch(){
 }
 openstack() {
 	# shellcheck disable=SC2046
-	docker run --rm \
-		$(env | grep OS_ | sed 's/OS_/ -e OS_/g' | tr -d '\n') \
-		${DOCKER_REPO_PREFIX}/openstack-client "$@"
+	docker run -v $(pwd):/tmp/ --net host -v $HOME/.config/openstack:/root/.config/openstack -e PYTHONIOENCODING=utf8 $(env | grep OS_ | sed 's/OS_/ -e OS_/g' | tr -d '\n') --rm -w /tmp/ --entrypoint openstack openstack "$@"
 }
 osquery(){
 	rmctr osquery
@@ -1054,17 +1054,16 @@ termboy(){
 		--name termboy \
 		${DOCKER_REPO_PREFIX}/nes "/games/${game}.rom"
 }
-terraform(){
-	docker run -it --rm \
-		-v "${HOME}:${HOME}:ro" \
-		-v "$(pwd):/usr/src/repo" \
-		-v /tmp:/tmp \
-		--workdir /usr/src/repo \
-		--log-driver none \
-		-e GOOGLE_APPLICATION_CREDENTIALS \
-		-e SSH_AUTH_SOCK \
-		${DOCKER_REPO_PREFIX}/terraform "$@"
-}
+# terraform(){
+# 	docker run -it --rm \
+# 		-v "${HOME}:/root" \
+# 		-v /tmp:/tmp \
+# 		--workdir /root/$(realpath --relative-to=${HOME} ${PWD}) \
+# 		--log-driver none \
+# 		-e GOOGLE_APPLICATION_CREDENTIALS \
+# 		-e SSH_AUTH_SOCK \
+# 		${DOCKER_REPO_PREFIX}/terraform "$@"
+# }
 tor(){
 	del_stopped tor
 
@@ -1300,7 +1299,6 @@ visualstudio(){
 		-e "LC_ALL=ko_KR.UTF-8" \
 		-v "$(pwd):/project" \
 		-e "DISPLAY=unix${DISPLAY}" \
-		--device /dev/dri \
 		--name visualstudio \
 		${DOCKER_REPO_PREFIX}/vscode \
 		bash -c 'su user -p -c "/usr/share/code/code /project"'

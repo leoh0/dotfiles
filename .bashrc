@@ -121,14 +121,14 @@ GPG_TTY=$(tty)
 export GPG_TTY
 # Set SSH to use gpg-agent
 unset SSH_AGENT_PID
-if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
-        if [[ -z "$SSH_AUTH_SOCK" ]] || [[ "$SSH_AUTH_SOCK" == *"apple.launchd"* ]]; then
-                SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
-                export SSH_AUTH_SOCK
-        fi
-fi
+#if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
+#        if [[ -z "$SSH_AUTH_SOCK" ]] || [[ "$SSH_AUTH_SOCK" == *"apple.launchd"* ]]; then
+#                SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+#                export SSH_AUTH_SOCK
+#        fi
+#fi
 # add alias for ssh to update the tty
-alias ssh="gpg-connect-agent updatestartuptty /bye >/dev/null; TERM=xterm-color ssh"
+#alias ssh="gpg-connect-agent updatestartuptty /bye >/dev/null; TERM=xterm-color ssh"
 
 #
 # # ex - archive extractor
@@ -179,12 +179,9 @@ export YAOURT_COLORS="nb=1:pkg=1:ver=1;32:lver=1;45:installed=1;42:grp=1;34:od=1
 
 # fzf
 # shellcheck source=/dev/null
-. /usr/share/fzf/key-bindings.bash
+. /usr/share/doc/fzf/examples/key-bindings.bash
 # shellcheck source=/dev/null
-. /usr/share/fzf/completion.bash
-
-# https://wiki.archlinux.org/index.php/Xorg/Keyboard_configuration#Using_xset
-xset r rate 250 60
+. /usr/share/doc/fzf/examples/completion.bash
 
 for file in ~/.{bash_prompt,aliases,functions,path,dockerfunc,extra,exports}; do
         if [[ -r "$file" ]] && [[ -f "$file" ]]; then
@@ -210,3 +207,23 @@ if [ -d "$HOME/.pyenv/" ]; then
         pyenv activate py36
 fi
 
+source ~/.autoenv/activate.sh
+export AUTOENV_ENABLE_LEAVE=true
+export AUTOENV_ASSUME_YES=true
+
+source ~/.extra
+
+. $HOME/.asdf/asdf.sh
+. $HOME/.asdf/completions/asdf.bash
+
+#DOCKER_DISTRO="Ubuntu-20.04"
+#DOCKER_DIR=/mnt/wsl/shared-docker
+#DOCKER_SOCK="$DOCKER_DIR/docker.sock"
+#export DOCKER_HOST="unix://$DOCKER_SOCK"
+#if [ ! -S "$DOCKER_SOCK" ]; then
+#    mkdir -pm o=,ug=rwx "$DOCKER_DIR"
+#    sudo chgrp docker "$DOCKER_DIR"
+#    /mnt/c/Windows/System32/wsl.exe -d $DOCKER_DISTRO sh -c "nohup sudo -b dockerd < /dev/null > $DOCKER_DIR/dockerd.log 2>&1"
+#fi
+
+[[ "$(cat /sys/class/net/eth0/mtu)" == "1500" ]] && echo 1400 | sudo tee /sys/class/net/eth0/mtu > /dev/null

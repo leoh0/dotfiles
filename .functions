@@ -30,16 +30,19 @@ function ks() {
 
 function os() {
   local context
-  context=$(find "$HOME/openstack/" -maxdepth 1 -name 'openrc*' | sort | \
-	  fzf -x \
-	      -m \
-	      -e \
-	      +s \
-	      --reverse \
-              --bind=left:page-up,right:page-down \
-              --no-mouse)
-  # shellcheck source=/dev/null
-  source "$context"
+  context=$(cat "$HOME/.config/openstack/clouds.yaml" | grep '/.*:$' | fzf -x \
+        -m \
+        -e \
+        +s \
+        --reverse \
+        --bind=left:page-up,right:page-down \
+        --no-mouse | awk '/^  [a-z]/{print $1}' | cut -d':' -f1)
+  if [[ "$context" != "" ]]
+  then
+    export OS_CLOUD=$context
+  else
+    echo "ERROR: Can not recognize os cloud string: $context"
+  fi
 }
 
 # quickly terminate stuck pods
@@ -774,4 +777,20 @@ restart_gpgagent(){
 
 gitsetoriginnopush() {
 	git remote set-url --push origin no_push
+}
+
+gitclone() {
+	local repo=$1
+
+	if [[ -z $repo ]]; then
+		echo "Please specifiy a repo name'"
+
+		return 1
+	fi
+	r=$(echo $repo | cut -d'/' -f3,4)
+	(
+		mkdir -p $HOME/src/$r
+		cd $HOME/src/$r
+		git clone $1
+	)
 }

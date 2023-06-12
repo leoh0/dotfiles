@@ -61,16 +61,28 @@ if tput setaf 1 &> /dev/null; then
         bold=$(tput bold);
         reset=$(tput sgr0);
         # Solarized colors, taken from http://git.io/solarized-colors.
+
+#        black=$(tput setaf 0);
+#        blue=$(tput setaf 33);
+#        cyan=$(tput setaf 37);
+#        green=$(tput setaf 64);
+#        orange=$(tput setaf 166);
+#        purple=$(tput setaf 125);
+#        red=$(tput setaf 124);
+#        violet=$(tput setaf 61);
+#        white=$(tput setaf 15);
+#        yellow=$(tput setaf 136);
+
         black=$(tput setaf 0);
-        blue=$(tput setaf 33);
-        cyan=$(tput setaf 37);
-        green=$(tput setaf 64);
-        orange=$(tput setaf 166);
-        purple=$(tput setaf 125);
-        red=$(tput setaf 124);
-        violet=$(tput setaf 61);
-        white=$(tput setaf 15);
-        yellow=$(tput setaf 136);
+        blue=$(tput setaf 4);
+        cyan=$(tput setaf 6);
+        green=$(tput setaf 2);
+        magenta=$(tput setaf 5);
+        red=$(tput setaf 1);
+        white=$(tput setaf 7);
+        yellow=$(tput setaf 3);
+        violet=$(tput setaf 13);
+        orange=$(tput setaf 214);
 else
         bold='';
         reset="\\e[0m";
@@ -112,6 +124,10 @@ function __stat() {
     fi
 }
 
+function __openstack() {
+    echo -en "$OS_CLOUD"
+}
+
 function __kubernetes() {
   echo -en "$(kubectl config current-context 2>/dev/null)"
 }
@@ -127,6 +143,7 @@ PS1+="\\[${white}\\] in ";
 PS1+="\\[${green}\\]\\w"; # working directory
 PS1+="\$(prompt_git \"${white} on ${violet}\") "; # Git repository details
 PS1+="\\[${orange}\\]\$(__kubernetes) "; # kubernetes
+PS1+="\\[${yellow}\\]\$(__openstack) "; # openstack
 PS1+="\\n";
 PS1+="\\[${white}\\]\$ \\[${reset}\\]"; # `$` (and reset color)
 export PS1;
